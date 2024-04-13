@@ -1,34 +1,71 @@
 <template>
   <view class="container">
-    <image class="logo" src="/static/logo.png"></image>
-    <view class="form">
-      <input class="input" type="text" placeholder="用户名" v-model="username">
-      <input class="input" type="password" placeholder="密码" v-model="password">
-      <view class="button" @click="login">登录</view>
+    <image class="background" :src="backgroundImg"></image>
+    <view class="login-container">
+      <image class="logo" :src="logoImg"></image>
+      <button @click="wxLogin" class="login-button">微信一键登录</button>
     </view>
   </view>
 </template>
-<script setup>
 
+<script setup>
 import { ref } from 'vue';
-const username = ref('');
-const password = ref('');
-const login = () => {
-  // 在这里编写登录逻辑，例如发送登录请求到服务器
-  // 这里只是示例，实际开发中需要根据具体情况进行修改
-  console.log('用户名:', this.username);
-  console.log('密码:', this.password);
-  // 登录成功后的跳转逻辑，这里使用uniapp提供的路由跳转方式
+import { register } from '@/http/api/all';
+const backgroundImg = ref('../../static/bg_12.png');
+const logoImg = ref('https://img.yzcdn.cn/vant/logo.png');
+console.log('backgroundImg', uni);
+const wxLogin = () => {
+  uni.login({
+    provider: 'weixin',
+    success: (loginRes) => {
+      console.log('微信登录成功', loginRes);
+      register({
+        userId: loginRes.code,
+        phone: 18237535263
+      }).then(res => {
+        console.log('登录成功', res);
+        uni.getUserInfo({
+          provider: 'weixin',
+          success: (infoRes1) => {
+            // 在这里处理获取到的用户信息
+            console.log(infoRes1.userInfo);
+            // 跳转
+            uni.navigateTo({
+              url: '/pages/index/index'
+            });
+          },
+          fail: (error) => {
+            console.error('获取用户信息失败', error);
+          }
+        });
+      }).catch(err => {
+        console.error('登录失败', err);
+      });
+    },
+    fail: (error) => {
+      console.error('微信登录失败', error);
+    }
+  });
 }
 </script>
-<style>
+
+<style scoped lang="scss">
 .container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   height: 100vh;
-  background-color: #f0f0f0;
+}
+
+.background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.login-container {
+  text-align: center;
 }
 
 .logo {
@@ -37,32 +74,13 @@ const login = () => {
   margin-bottom: 20px;
 }
 
-.form {
-  width: 80%;
-  max-width: 300px;
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.input {
-  width: 100%;
-  height: 40px;
-  margin-bottom: 10px;
-  padding: 0 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.button {
-  width: 100%;
-  height: 40px;
-  line-height: 40px;
-  text-align: center;
-  background-color: #007bff;
+.login-button {
+  background-color: #07c160;
   color: #fff;
+  border: none;
+  padding: 10px 20px;
   border-radius: 5px;
+  font-size: 16px;
   cursor: pointer;
 }
 </style>

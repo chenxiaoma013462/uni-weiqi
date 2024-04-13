@@ -3,7 +3,36 @@
 		{
 			"path": "pages/login/index",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "登录",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "首页",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/matchRoom/index",
+			"style": {
+				"navigationBarTitleText": "匹配房间"
+				// "navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/game/index",
+			"style": {
+				"navigationBarTitleText": "游戏中",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/ranking/index",
+			"style": {
+				"navigationBarTitleText": "排行榜"
+				// "navigationStyle": "custom"
 			}
 		}
 	],

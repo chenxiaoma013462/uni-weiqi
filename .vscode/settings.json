@@ -160,5 +160,6 @@
     "zxcvbn",
     "lintstagedrc",
     "brotli"
-  ]
+  ],
+  "liveServer.settings.port": 5501
 }
