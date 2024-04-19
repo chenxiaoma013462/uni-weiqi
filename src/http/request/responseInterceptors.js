@@ -16,19 +16,19 @@ module.exports = () => {
       const data = response.data
       // 自定义参数
       const custom = response.config?.custom
-      if (data.code !== 0) {
+      if (data.httpCode !== 0) {
         // 服务端返回的状态码不等于0，则reject()
         if (
-          data.code === 401 &&
+          data.httpCode === 401 &&
           !cfg.urlWhiteList401.includes(response.config?.url)
         ) {
           uni.reLaunch({
-            url: '/pages/hello/hello'
+            url: '/pages/login/index'
           })
           return
         }
         // 如果没有显式定义custom的toast参数为false的话，默认对报错进行toast弹出提示
-        if (data.code !== 401 && custom.toast !== false) {
+        if (data.httpCode !== 401 && custom.toast !== false) {
           uni.$u.toast(data.msg)
         }
         // 如果需要catch返回，则进行reject

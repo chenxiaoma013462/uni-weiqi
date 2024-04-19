@@ -25,7 +25,7 @@ module.exports = (vm) => {
       // 可以在此通过vm引用vuex中的变量，具体值在vm.$store.state中
       // console.log(vm.$store.state);
       const token =
-        config.header['token'] || vm.$store.getters['user/userToken']
+        config.header['token'] || uni.getStorageSync('token') || ''
       if (token) {
         config.header['Authorization'] = `Bearer ${token}`
       }

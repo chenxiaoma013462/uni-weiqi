@@ -65,7 +65,7 @@ const bz = (y, x) => {
         name = "normal";
     }
   }
-  return `../../../static/normalGame/${name}.png`;
+  return `https://crmp.oss-cn-hangzhou.aliyuncs.com/static/images/${name}.png`;
 }
 // 点击事件
 const handleClick = (y, x) => {

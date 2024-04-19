@@ -6,8 +6,7 @@
         <up-avatar :src="src"></up-avatar>
       </view>
       <view class="desc">
-        <view>name</view>
-        <view>id</view>
+        <view>{{ name }}</view>
       </view>
     </view>
     <view class="content">
@@ -23,7 +22,7 @@
   </up-modal>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 
 const list = ref([
   {
@@ -46,7 +45,9 @@ const src = ref('https://img1.baidu.com/it/u=1743526978,699491215&fm=253&fmt=aut
 // 使用 ref 创建响应式数据  
 const showJoin = ref(false);
 const valueJoin = ref('');
-
+const name = computed(() => {
+  return uni.getStorageSync('name')
+})
 const createJoin = ref(false);
 const fromCreate = ref({
   width: 19,
@@ -81,6 +82,11 @@ const confirmJoin = () => {
   showJoin.value = false;
   valueJoin.value = '';
 }
+
+
+onMounted(() => {
+  console.log('onMounted');
+})
 </script>
 <style lang="scss" scoped>
 .container {

@@ -17,7 +17,7 @@ export const myRequest = (options) => {
 			},
 			success: (res) => {
 				//返回的数据（不固定，看后端接口，这里是做了一个判断，如果不为true，用uni.showToast方法提示获取数据失败)
-				if (res.data.code != 200) {
+				if (res.data.httpCode != 200) {
 					uni.showToast({
 						title: '获取数据失败',
 						icon: 'none'
