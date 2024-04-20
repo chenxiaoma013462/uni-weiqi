@@ -3,7 +3,7 @@
 
     <view class="he">
       <view class="word">
-        <view>
+        <view class="bdr50">
           黑棋
         </view>
         <!-- 头像 -->
@@ -21,7 +21,7 @@
         <!-- 头像 -->
         <view class="avatar">
           <up-avatar :src="src"></up-avatar>
-          <view>{{ name }}</view>
+          <view class="wite">{{ name }}</view>
         </view>
         <view class="btn">
           <u-button shape="circle" size="mini" type="primary" @click="handlePaly">开始游戏</u-button>
@@ -30,7 +30,7 @@
           &nbsp;&nbsp;&nbsp;&nbsp;
           <u-button shape="circle" size="mini" type="primary" @click="handleQuit">退出游戏</u-button>
         </view>
-        <view class="">
+        <view class="wite bdr50">
           白棋
         </view>
       </view>
@@ -66,22 +66,12 @@ const state = reactive({
 })
 const handlePaly = () => {
   console.log('开始游戏')
-  // uni.navigateTo({
-  //   url: '/pages/game/index'
-  // })
-  // state.socket.send({
-  //   type: 'text',
-  //   data: '开始游戏 --- 123'
-  // }
-  // )
-  // state.socket.onMessage((res) => {
-  //   console.log('socket---接收消息res', res)
-  // })
   const message = {
     "content": "开始游戏111111",
     "typeEnum": "JOIN_ROOM",
     "roomId": props.roomId,
-    "userId": state.userId
+    "userId": state.userId,
+    toUser: ['o7dim4m_e7rOW6mdi8uXswRiIvJY']
   }
   socketSendMsg(message)
 }
@@ -106,6 +96,17 @@ onMounted(() => {
 </script>
 <style lang="scss" scoped>
 .user_view {
+
+  .wite {
+    color: #fff;
+  }
+
+  .bdr50 {
+    border: 1rpx solid;
+    padding: 20rpx 10rpx;
+    border-radius: 50%;
+  }
+
   height: 100%;
   display: flex;
   justify-content: space-between;

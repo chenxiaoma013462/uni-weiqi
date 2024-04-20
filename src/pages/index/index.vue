@@ -80,7 +80,11 @@ const goTo = (fun) => {
 const confirmJoin = () => {
   console.log('加入房间', valueJoin.value);
   showJoin.value = false;
+  uni.navigateTo({
+    url: `/pages/matchRoom/index?roomId=${valueJoin.value}`
+  })
   valueJoin.value = '';
+
 }
 
 

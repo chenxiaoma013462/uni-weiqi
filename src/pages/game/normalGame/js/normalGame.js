@@ -211,7 +211,7 @@ class NormalGame extends Game {
             // 撤销放置
             this._set(putPoint, GameObject.air);
             console.warn("由于打劫不能放置");
-            return;
+            return false;
         }
 
         // 更新每个玩家的上一轮被吃位置
@@ -234,7 +234,7 @@ class NormalGame extends Game {
                 this._set(putPoint, GameObject.air);
                 // 不能放置！！
                 console.warn("不能触发攻击，且会导致自杀");
-                return;
+                return false;
             }
         }
         // 迭代轮

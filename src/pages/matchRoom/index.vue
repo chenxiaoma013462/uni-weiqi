@@ -12,6 +12,7 @@ import normalGame from '../game/normalGame/index.vue'
 import { socketSendMsg, joinOrBuildRoom } from '@/http/api/all';
 import userView from './userView/index.vue'
 import webSocketUtils from '@/utils/socket/index'
+import { onLoad } from '@dcloudio/uni-app';
 const state = reactive({
   socket: null,
   userId: uni.getStorageSync('id'),
@@ -19,16 +20,34 @@ const state = reactive({
   userList: []
 })
 onMounted(async () => {
-  const { data } = await joinOrBuildRoom({
-    userId: state.userId,
-  })
-  state.roomId = data.data.roomId
-  state.userList = data.data.userList
-  console.log('加入房间', data.data)
-  const socketUrl = `ws://193.112.190.204:5000/api/weiqi/ws/${state.roomId}`
+  console.log('onMounted123', state)
+  let config = {
+    roomId: '',
+    userId: ''
+  }
+  if (state.roomId) {
+    console.log('加入房间')
+    config.roomId = state.roomId
+    config.userId = state.userId
+  } else {
+    config.userId = state.userId
+    console.log('新建房间', data)
+    delete config.roomId
+  }
+
+  const { data } = await joinOrBuildRoom(config)
+  const socketUrl = `ws://193.112.190.204:5000/api/weiqi/ws/${state.userId}`
   state.socket ? this.$socket.Close() : null
   state.socket = new webSocketUtils(socketUrl, 5000)
 })
+
+onLoad(async (opt) => {
+  console.log('onLoad', opt)
+  if (opt.roomId) {
+    state.roomId = opt.roomId
+  }
+})
+
 
 </script>
 <style lang="scss" scoped>

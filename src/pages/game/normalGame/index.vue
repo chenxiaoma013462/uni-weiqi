@@ -75,10 +75,9 @@ const handleClick = (y, x) => {
     title: '此处已有棋子',
     icon: 'none'
   });
-  game.putPiece(point);
+  const a = game.putPiece(point);
 
-  console.log('NormalGame', game);
-
+  console.log('NormalGame', a);
 }
 onMounted(() => {
   console.log('onMounted');
@@ -170,6 +169,17 @@ const stop = () => {
       }
     }
   });
+}
+// 白子下棋
+const whitePutPiece = () => {
+  const point = game.whiteAi();
+  game.putPiece(point);
+}
+
+// 黑子下棋
+const blackPutPiece = () => {
+  const point = game.blackAi();
+  const a = game.putPiece(point);
 }
 
 </script>
