@@ -71,6 +71,10 @@ const bz = (y, x) => {
 const handleClick = (y, x) => {
 
   const point = new Point(x, y)
+  if (game.arr[y][x] !== 0) return uni.showToast({
+    title: '此处已有棋子',
+    icon: 'none'
+  });
   game.putPiece(point);
 
   console.log('NormalGame', game);

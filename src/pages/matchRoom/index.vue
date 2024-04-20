@@ -1,12 +1,11 @@
 <template>
-  <div class="">
-
-    <normalGame></normalGame>
-
-
-    <view class="paly">
+  <div class="match_room">
+    <!-- <view class="paly">
       <up-button type="primary" :loading="false" loadingText="加载中" @click="handlePaly">开始游戏</up-button>
-    </view>
+    </view> -->
+    <userView>
+      <normalGame></normalGame>
+    </userView>
   </div>
 </template>
 
@@ -14,7 +13,7 @@
 import { onMounted, reactive } from 'vue'
 import normalGame from '../game/normalGame/index.vue'
 import { socketSendMsg, joinOrBuildRoom } from '@/http/api/all';
-
+import userView from './userView/index.vue'
 import webSocketUtils from '@/utils/socket/index'
 const state = reactive({
   socket: null,
@@ -48,13 +47,15 @@ onMounted(async () => {
   const { data } = await joinOrBuildRoom({
     userId: state.userId,
   })
-  console.log('加入房间', data)
-  const socketUrl = 'ws://193.112.190.204:5000/api/weiqi/ws/123'
+  console.log('加入房间', data.data)
+  const socketUrl = `ws://193.112.190.204:5000/api/weiqi/ws/${data.data.roomId}`
   state.socket ? this.$socket.Close() : null
   state.socket = new webSocketUtils(socketUrl, 5000)
 })
 
 </script>
 <style lang="scss" scoped>
-.paly {}
+.match_room {
+  height: 100vh;
+}
 </style>
