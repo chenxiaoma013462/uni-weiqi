@@ -32,8 +32,19 @@ export function socketSendMsg(config) {
 	})}
 // 创建/加入房间
 export function joinOrBuildRoom(config) {
-	return myRequest({
-		url: '/weiqi/webSocket/joinOrBuildRoom?userId='+config.userId+'&roomId='+config.roomId,
-		method: 'post',
-		// data: config
-	})}
+
+		//构建基本的URL
+    let url = '/weiqi/webSocket/joinOrBuildRoom?userId=' + config.userId;
+
+    // 检查config.roomId是否存在，并在URL中添加它（如果存在）
+    if (config.roomId) {
+        url += '&roomId=' + config.roomId;
+    }
+
+    // 发起请求
+    return myRequest({
+        url: url,
+        method: 'post',
+        // data: config
+    });
+	}
