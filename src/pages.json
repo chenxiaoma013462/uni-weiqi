@@ -17,8 +17,10 @@
 		{
 			"path": "pages/matchRoom/index",
 			"style": {
-				"navigationBarTitleText": "匹配房间"
+				"navigationBarTitleText": "匹配房间",
 				// "navigationStyle": "custom"
+				"navigationStyle": "custom"
+
 			}
 		},
 		{

@@ -7,7 +7,7 @@ import {PointSet} from "./Point.js";
  * by littlefean
  */
 class Game {
-    constructor() {
+    constructor(size = 14) {
         /**
          * 轮流轮 [2, 3, 4]  表示三个玩家在下棋
          * 玩家从2开始编号递增
@@ -26,8 +26,8 @@ class Game {
          */
         this.colorList = [];
         // 默认宽度高度属性是19*19
-        this.width = 12;
-        this.height = 12;
+        this.width = size;
+        this.height = size;
         /**
          * 存放棋子数据的二维数组
          * 经过思考发现 正方形棋盘，三角形，六边形均可用二维数组存放

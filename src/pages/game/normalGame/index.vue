@@ -10,16 +10,16 @@
       </view>
     </view>
   </view>
-  <view @click="stop">结束</view>
+  <!-- <view @click="stop">结束</view> -->
 </template>
 
 <script setup>
 import { onMounted, ref, reactive } from 'vue'
 import { NormalGame } from './js/normalGame.js'
 import { Point } from './js/Point.js'
-const height = ref(12);
-const width = ref(12);
-const game = reactive(new NormalGame())
+const height = ref(14);
+const width = ref(14);
+const game = reactive(new NormalGame(height.value))
 
 
 const render = (b) => {
@@ -82,6 +82,7 @@ const handleClick = (y, x) => {
 }
 onMounted(() => {
   console.log('onMounted');
+  uni.$on('stopPaly', stop)
 })
 // 定义计算函数
 function calculateWinner(board) {
@@ -163,6 +164,9 @@ const stop = () => {
     success: function (res) {
       if (res.confirm) {
         console.log('用户点击确定');
+        uni.navigateTo({
+          url: '/pages/index/index'
+        })
       }
     }
   });
@@ -184,9 +188,8 @@ const stop = () => {
 
 
 .chessboard {
-  width: 100%;
+  width: calc(100vw - 50rpx);
   outline: solid 1px;
-  padding: 12rpx;
   @L: 50rpx;
   //@M: 5px;
   @M: 0;

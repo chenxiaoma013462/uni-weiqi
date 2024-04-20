@@ -1,9 +1,6 @@
 <template>
   <div class="match_room">
-    <!-- <view class="paly">
-      <up-button type="primary" :loading="false" loadingText="加载中" @click="handlePaly">开始游戏</up-button>
-    </view> -->
-    <userView>
+    <userView :roomId="state.roomId" :userList="state.userList">
       <normalGame></normalGame>
     </userView>
   </div>
@@ -17,38 +14,18 @@ import userView from './userView/index.vue'
 import webSocketUtils from '@/utils/socket/index'
 const state = reactive({
   socket: null,
-  userId: uni.getStorageSync('id')
+  userId: uni.getStorageSync('id'),
+  roomId: '',
+  userList: []
 })
-const handlePaly = () => {
-  console.log('开始游戏')
-  // uni.navigateTo({
-  //   url: '/pages/game/index'
-  // })
-  // state.socket.send({
-  //   type: 'text',
-  //   data: '开始游戏 --- 123'
-  // }
-  // )
-  // state.socket.onMessage((res) => {
-  //   console.log('socket---接收消息res', res)
-  // })
-  const message = {
-    "content": "开始游戏111111",
-    "typeEnum": "JOIN_ROOM",
-    "roomId": "4reqweasd",
-    "userId": state.userId
-  }
-  socketSendMsg(message)
-}
-
-
-
 onMounted(async () => {
   const { data } = await joinOrBuildRoom({
     userId: state.userId,
   })
+  state.roomId = data.data.roomId
+  state.userList = data.data.userList
   console.log('加入房间', data.data)
-  const socketUrl = `ws://193.112.190.204:5000/api/weiqi/ws/${data.data.roomId}`
+  const socketUrl = `ws://193.112.190.204:5000/api/weiqi/ws/${state.roomId}`
   state.socket ? this.$socket.Close() : null
   state.socket = new webSocketUtils(socketUrl, 5000)
 })
