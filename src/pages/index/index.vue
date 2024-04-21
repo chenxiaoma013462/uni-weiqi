@@ -67,7 +67,8 @@ const goTo = (fun) => {
     case 'goCreate':
       createJoin.value = true;
       uni.navigateTo({
-        url: '/pages/matchRoom/index'
+        url: `/pages/matchRoom/index`
+        // url: `/pages/matchRoom/index?roomId=${valueJoin.value}`
       })
       break
     case 'goRank':

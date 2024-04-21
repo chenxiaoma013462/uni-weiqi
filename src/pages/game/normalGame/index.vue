@@ -10,7 +10,7 @@
       </view>
     </view>
   </view>
-  <!-- <view @click="stop">结束</view> -->
+  <view>{{ game.turnIndex }}</view>
 </template>
 
 <script setup>
@@ -75,18 +75,40 @@ const handleClick = (y, x) => {
     title: '此处已有棋子',
     icon: 'none'
   });
-  const a = game.putPiece(point);
+  const a = game.putPiece(point, game.turnIndex);
 
   console.log('NormalGame', a, game);
   if (a) {
     uni.$emit('SEND_MAKE_MOVE', {
       y, x, turnIndex: game.turnIndex
     })
+    uni.$emit('send_dropped', true)
   }
 }
+uni.$on('is_join_user', () => {
+  // game.turnNext()
+  game.turnIndex = 1
+  console.log(game.turnIndex, 'game.turnIndex')
+})
 onMounted(() => {
+
   console.log('onMounted');
   uni.$on('stopPaly', stop)
+  uni.$on('SET_MAKE_MOVE', (data) => {
+    // if (data.turnIndex === game.turnIndex) {
+    const x = data.x
+    const y = data.y
+    const point = new Point(x, y)
+    if (game.arr[y][x] !== 0) return uni.showToast({
+      title: '此处已有棋子',
+      icon: 'none'
+    });
+    const a = game.putPiece(point, data.turnIndex);
+    if (a) {
+      uni.$emit('send_dropped', false)
+    }
+    // }
+  })
 })
 // 定义计算函数
 function calculateWinner(board) {

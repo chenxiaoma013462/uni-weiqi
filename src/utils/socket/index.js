@@ -112,12 +112,13 @@ class webSocketUtils {
     // 收到服务器数据后的回调函数
     this.socketTask.onMessage(event => {
       console.log('收到服务器数据11111111：', event.data);
-      if(isJSON(event.data)) {
-        const jsonobject = JSON.parse(event.data)
+      const data = JSON.parse(event.data)
+      if(isJSON(data)) {
+        const jsonobject = JSON.parse(data)
 
         this.globalCallback(jsonobject)
       }else {
-        this.globalCallback(event.data)
+        this.globalCallback(data)
       }
     });
   }

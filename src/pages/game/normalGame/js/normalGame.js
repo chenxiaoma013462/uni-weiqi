@@ -33,15 +33,6 @@ class NormalGame extends Game {
         }
     }
 
-    _getHoverCss() {
-        return `.tableBox:hover {
-            outline-color: ${this.colorList[this.turnIndex]} !important;
-            outline-width: 3px !important;
-            z-index: 4;
-            
-        }`;
-    }
-
     /**
      * 初始化一些功能：给界面上的按钮绑定事件。例如随机下棋按钮
      * @private
@@ -177,10 +168,10 @@ class NormalGame extends Game {
      * 此函数被触发的时候是某一个玩家下了棋了之后
      * @param putPoint {Point}
      */
-    putPiece(putPoint) {
+    putPiece(putPoint ,turnIndex) {
         console.log("putPiece", putPoint);
         // 当前下棋的玩家是 turIndex指向的玩家
-        let nowUser = this.turnList[this.turnIndex];
+        let nowUser = this.turnList[turnIndex];
         // 这个下的位置是不是只有一个空气，为了打劫检测用
         let isOne = this._getGroupSet(putPoint).size() === 1;
 
@@ -205,7 +196,7 @@ class NormalGame extends Game {
         // 原因是：
         if (
             attackFlag  // 这个位置下了之后立刻能吃掉对方子
-            && this.lastEatenSet[this.turnIndex].have(putPoint)  // 这个位置上一次被吃掉过
+            && this.lastEatenSet[turnIndex].have(putPoint)  // 这个位置上一次被吃掉过
             && isOne  // 这个位置也恰好只有一个空
         ) {
             // 撤销放置
@@ -238,8 +229,8 @@ class NormalGame extends Game {
             }
         }
         // 迭代轮
-        this.turnNext();
-    
+        // this.turnNext();
+        return true
     }
 
 }

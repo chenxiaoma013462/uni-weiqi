@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import normalGame from '../game/normalGame/index.vue'
 import { socketSendMsg, joinOrBuildRoom } from '@/http/api/all';
 import userView from './userView/index.vue'
@@ -19,8 +19,8 @@ const state = reactive({
   roomId: '',
   userList: [],
   isJoin: false,
-  userViewRef: null
 })
+const userViewRef = ref(null)
 onMounted(async () => {
   console.log('onMounted123', state)
   let config = {
@@ -38,6 +38,15 @@ onMounted(async () => {
   }
 
   const { data } = await joinOrBuildRoom(config)
+  if (data.httpCode !== 200) {
+    // 返回上一页
+    uni.showToast({
+      title: data.msg,
+      icon: 'none'
+    });
+    console.log('退出，房间号****')
+    return
+  }
   state.roomId = data.data.roomId
   state.userList = data.data.userList
   const socketUrl = `ws://193.112.190.204:5000/api/weiqi/ws/${state.userId}`
@@ -45,10 +54,10 @@ onMounted(async () => {
   state.socket = new webSocketUtils(socketUrl, 5000)
   state.socket.globalCallback = (res) => {
     console.log('res', res)
-    // FIND_ROOM,JOIN_ROOM,MAKE_MOVE,QUEUE_FOR_MATCH,USER_LEAVE,USER_READY
+    // FIND_ROOM,JOIN_ROOM,MAKE_MOVE,QUEUE_FOR_MATCH,USER_LEAVE,USER_READY,START_GAME
     switch (res.type) {
       case 'JOIN_ROOM':
-        state.userList = res.userList
+        state.userList.push(res)
         console.log('JOIN_ROOM 加入房间')
         // uni.toast({
         //   title: res.userName + '加入房间',
@@ -58,6 +67,7 @@ onMounted(async () => {
         break
       case 'MAKE_MOVE':
         console.log('MAKE_MOVE 落子')
+        uni.$emit('SET_MAKE_MOVE', res)
         break
       case 'USER_LEAVE':
         console.log('USER_LEAVE 退出房间')
@@ -66,7 +76,9 @@ onMounted(async () => {
         //   icon: 'success'
         // })
         console.log(res.userName + '退出房间')
-        state.userList = state.userList.filter(item => item.name !== res.name)
+        state.userList = state.userList.filter(item => item.userName !== res.name)
+        uni.$emit('stopPaly')
+
         break
       case 'USER_READY':
         console.log('USER_READY 准备游戏')
@@ -75,8 +87,7 @@ onMounted(async () => {
         //   icon: 'success'
         // })
         console.log(res.userName + '已准备')
-        console.log('state.userList', state.userViewRef)
-        state.userViewRef.isReady = true
+        uni.$emit('SEND_USER_READY', res.userName)
         break
       case 'FIND_ROOM':
         console.log('FIND_ROOM  寻找空闲房间')
@@ -84,6 +95,9 @@ onMounted(async () => {
       case 'QUEUE_FOR_MATCH':
         console.log('QUEUE_FOR_MATCH 排队匹配')
         break
+      case 'START_GAME':
+        console.log('START_GAME 开始游戏',)
+        uni.$emit("SEND_START_GAME")
     }
   }
 })

@@ -8,10 +8,19 @@
         </view>
 
         <view class="wite" v-if="!props.isJoin">
-          {{ props.isReady ? '准备' : '未准备' }}
+          <view v-if="state.isOk">{{
+          state.isStart ? '对手出' : '到你出'
+        }}</view>
+          <br />
+          <br />
+          <br />
+          {{ state.isReady ? '已准备' : '未准备' }}
         </view>
         <view class="wite" v-else>
-          {{ props.isStart ? '等待开始' : '已开始' }}
+          <view v-if="state.isOk">{{
+          state.isStart ? '对手出' : '到你出'
+        }}</view>
+          {{ !state.isOk ? '等待开始' : '已开始' }}
         </view>
         <!-- 头像 -->
         <view class="avatar">
@@ -20,7 +29,7 @@
         </view>
       </view>
     </view>
-    <view class="paly">
+    <view class="paly" :class="{ mask: state.isStart }">
       <slot></slot>
     </view>
     <view class="me">
@@ -33,7 +42,7 @@
         <view class="btn" v-if="!props.isJoin">
           <u-button shape="circle" size="mini" type="primary" @click="handlePaly">开始游戏</u-button>
           &nbsp;&nbsp;&nbsp;&nbsp;
-          <u-button shape="circle" size="mini" type="primary">邀请好友</u-button>
+          <u-button shape="circle" size="mini" type="primary" @click="handleCopy">复杂房间号</u-button>
           &nbsp;&nbsp;&nbsp;&nbsp;
           <u-button shape="circle" size="mini" type="primary" @click="handleQuit">退出游戏</u-button>
         </view>
@@ -58,7 +67,7 @@ import { computed, reactive, ref, onMounted } from 'vue'
 const src = 'https://img1.baidu.com/it/u=1743526978,699491215&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500'
 const name = ref(uni.getStorageSync('name'))
 const heName = computed(() => {
-  return state.userList.find(item => item.name !== name.value)?.name ?? '未加入'
+  return props.userList.filter(x => x.userName !== name.value)?.[0]?.userName ?? '未加入'
 })
 const props = defineProps({
   roomId: {
@@ -76,15 +85,10 @@ const props = defineProps({
 })
 const state = reactive({
   isStart: true,
+  isOk: false,
   isReady: false,
   socket: null,
   userId: uni.getStorageSync('id'),
-  meInfo: computed(() => {
-    return state.userList.find(item => item.name === name.value)
-  }),
-  heInfo: computed(() => {
-    return state.userList.find(item => item.name !== name.value)
-  }),
 })
 const handlePaly = () => {
   if (!state.isReady) {
@@ -98,15 +102,18 @@ const handlePaly = () => {
   console.log('开始游戏')
   const message = {
     "content": {
-      "type": "MAKE_MOVE",
+      "type": "START_GAME",
     },
     "typeEnum": "MAKE_MOVE",
     // "typeEnum": "JOIN_ROOM",
     "roomId": props.roomId,
     "userId": state.userId,
-    toUser: ['o7dim4m_e7rOW6mdi8uXswRiIvJY']
   }
+  message.content = JSON.stringify(message.content)
+  state.isOk = true
   socketSendMsg(message)
+  uni.$emit("SEND_START_GAME")
+
 }
 
 const handleQuit = () => {
@@ -121,6 +128,7 @@ const handleQuit = () => {
     "roomId": props.roomId,
     "userId": state.userId
   }
+  message.content = JSON.stringify(message.content)
   socketSendMsg(message)
 
   uni.$emit('stopPaly')
@@ -130,16 +138,19 @@ const handleReady = async () => {
   console.log('准备')
   const message = {
     "content": {
-      "type": "USER_READY"
+      "type": "USER_READY",
+      userName: name.value
     },
     "typeEnum": "USER_READY",
     "roomId": props.roomId,
     "userId": state.userId
   }
+  message.content = JSON.stringify(message.content)
+
   try {
     await socketSendMsg(message)
 
-    state.isReady = true
+    state.isReady = !state.isReady
   } catch (e) {
     console.log('socketSendMsg', e)
     return
@@ -158,13 +169,40 @@ const sendMakeMove = (data) => {
     "roomId": props.roomId,
     "userId": state.userId
   }
+  message.content = JSON.stringify(message.content)
+
   socketSendMsg(message)
 }
+const handleCopy = () => {
+  // 将 值复杂到剪切板
+  uni.setClipboardData({
+    data: props.roomId
+  });
+}
 onMounted(() => {
+  if (props.isJoin) {
+    uni.$emit('is_join_user')
+  }
   console.log('userList', props)
   uni.$on('SEND_MAKE_MOVE', async (data) => {
     console.log('SEND_MAKE_MOVE', data)
     await sendMakeMove(data)
+  })
+  uni.$on('SEND_USER_READY', (name) => {
+    console.log('SEND_USER_READY', name)
+    state.isReady = !state.isReady
+  })
+
+  uni.$on('SEND_START_GAME', () => {
+    console.log('开始了')
+    state.isOk = true
+    if (!props.isJoin) {
+      console.log('nihaojhsdasdbkjbkjb,到你出手',)
+      state.isStart = false
+    }
+  })
+  uni.$on('send_dropped', (data) => {
+    state.isStart = data
   })
 })
 </script>
