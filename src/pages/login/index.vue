@@ -3,11 +3,14 @@
     <image class="background" :src="backgroundImg"></image>
     <view class="login-container">
       <image class="logo" :src="logoImg"></image>
+      <input class="input" type="number" placeholder="请输入你微信绑定的手机号" style="font-size:32rpx;" v-model="phone" />
+      <br />
+      <br />
       <button @click="hanldeCilck" class="login-button">
         微信一键登录</button>
     </view>
   </view>
-  <up-modal :show="show" :title="title" :showCancelButton="true" @confirm="wxLogin" @cancel="showJoin = false">
+  <up-modal :show="show" :title="title" :showCancelButton="true" @confirm="wxLogin" @cancel="show = false">
     <input class="nickname" type="nickname" placeholder="点击获取微信昵称" style="font-size:42rpx;" :value="name"
       @input="nameInput" @blur="nameInput" />
   </up-modal>
@@ -24,14 +27,30 @@ const logoImg = ref('https://img.yzcdn.cn/vant/logo.png');
 const show = ref(false);
 const name = ref('');
 const title = ref('获取信息');
-
+const phone = ref('');
 
 const hanldeCilck = () => {
+  if (!phone.value) {
+    uni.showToast({
+      title: '请输入手机号',
+      icon: 'none'
+    })
+    return
+  }
+  // 验证手机号
+  if (!/^1[3456789]\d{9}$/.test(phone.value)) {
+    uni.showToast({
+      title: '手机号格式错误',
+      icon: 'none'
+    })
+    return
+  }
   console.log('点击了')
   show.value = true;
 }
 
 const nameInput = (e) => {
+  console.log('nameInput', e);
   name.value = e.detail.value
   uni.setStorageSync('name', e.detail.value);
 }
@@ -56,7 +75,7 @@ const wxLogin = () => {
         console.log('获取openId成功', openId);
         const { data: tokenData } = await register({
           userId: openId,
-          phone: 18237535263,
+          phone: phone.value,
           wechatName: name.value
         })
         if (tokenData.httpCode === 200) {
@@ -123,5 +142,6 @@ onShow(() => {
   border-radius: 5px;
   font-size: 16px;
   cursor: pointer;
+  margin-top: 24rpx;
 }
 </style>

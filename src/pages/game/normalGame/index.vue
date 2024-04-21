@@ -77,7 +77,12 @@ const handleClick = (y, x) => {
   });
   const a = game.putPiece(point);
 
-  console.log('NormalGame', a);
+  console.log('NormalGame', a, game);
+  if (a) {
+    uni.$emit('SEND_MAKE_MOVE', {
+      y, x, turnIndex: game.turnIndex
+    })
+  }
 }
 onMounted(() => {
   console.log('onMounted');
@@ -169,17 +174,6 @@ const stop = () => {
       }
     }
   });
-}
-// 白子下棋
-const whitePutPiece = () => {
-  const point = game.whiteAi();
-  game.putPiece(point);
-}
-
-// 黑子下棋
-const blackPutPiece = () => {
-  const point = game.blackAi();
-  const a = game.putPiece(point);
 }
 
 </script>
