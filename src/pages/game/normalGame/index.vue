@@ -170,32 +170,39 @@ function calculateWinner(board) {
 
   // 比较得分，判断胜负
   if (blackScore > whiteScore) {
-    return "黑棋获胜!";
+    return {
+      tip: "黑棋获胜!",
+      win: 1, blackScore, whiteScore
+    };
   } else if (blackScore < whiteScore) {
-    return "白棋获胜!";
+    return {
+      tip: "白棋获胜!",
+      win: 0, blackScore, whiteScore
+    };
   } else {
-    return "平局!";
+    return {
+      tip: "平局!",
+      win: 2, blackScore, whiteScore
+    };
   }
 }
 
 const stop = () => {
   console.log('stop');
 
-  const tip = calculateWinner(game.arr);
-  // 提示
-  uni.showModal({
-    title: `游戏结束,结果如下：`,
-    content: tip,
-    showCancel: false,
-    success: function (res) {
-      if (res.confirm) {
-        console.log('用户点击确定');
-        uni.navigateTo({
-          url: '/pages/index/index'
-        })
-      }
-    }
-  });
+  const { tip, win, blackScore, whiteScore } = calculateWinner(game.arr);
+  let integral
+  if (win === 1) {
+    integral = blackScore
+  } else if (win === 0) {
+    integral = whiteScore
+  } else {
+    integral = 0
+  }
+  uni.$emit('send_stop_win', {
+    win, userIndex: game.turnIndex, integral, tip
+  })
+
 }
 
 </script>

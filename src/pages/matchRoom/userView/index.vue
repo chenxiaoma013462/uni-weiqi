@@ -62,8 +62,9 @@
 </template>
 
 <script setup>
-import { socketSendMsg } from '@/http/api/all';
+import { socketSendMsg, saveResult } from '@/http/api/all';
 import { computed, reactive, ref, onMounted } from 'vue'
+import dayjs from 'dayjs'
 const src = 'https://img1.baidu.com/it/u=1743526978,699491215&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500'
 const name = ref(uni.getStorageSync('name'))
 const heName = computed(() => {
@@ -89,6 +90,7 @@ const state = reactive({
   isReady: false,
   socket: null,
   userId: uni.getStorageSync('id'),
+  beginTime: '',
 })
 const handlePaly = () => {
   if (!state.isReady) {
@@ -116,7 +118,7 @@ const handlePaly = () => {
 
 }
 
-const handleQuit = () => {
+const handleQuit = async () => {
 
   console.log('退出游戏')
   const message = {
@@ -129,9 +131,16 @@ const handleQuit = () => {
     "userId": state.userId
   }
   message.content = JSON.stringify(message.content)
-  socketSendMsg(message)
-
-  uni.$emit('stopPaly')
+  await socketSendMsg(message)
+  state.isReady = false
+  if (!state.beginTime) {
+    uni.navigateTo({
+      url: '/pages/index/index'
+    })
+  }
+  if (state.beginTime && state.isOk) {
+    uni.$emit('stopPaly')
+  }
 
 }
 const handleReady = async () => {
@@ -194,6 +203,7 @@ onMounted(() => {
   })
 
   uni.$on('SEND_START_GAME', () => {
+    state.beginTime = dayjs().format('YYYY-MM-DD HH:mm:ss')
     console.log('开始了')
     state.isOk = true
     if (!props.isJoin) {
@@ -203,6 +213,39 @@ onMounted(() => {
   })
   uni.$on('send_dropped', (data) => {
     state.isStart = data
+  })
+  uni.$on('send_stop_win', (data) => {
+    let status
+    if (data.win === 2) {
+      status = '2'
+    } else if (data.win === data.userIndex) {
+      status = '1'
+    } else {
+      status = '0'
+    }
+
+    const config = {
+      "beginTime": state.beginTime,
+      "endTime": dayjs().format('YYYY-MM-DD HH:mm:ss'),
+      "integral": data.integral,
+      status,
+      "userId": uni.getStorageSync('id')
+    }
+    saveResult(config)
+    // 提示
+    uni.showModal({
+      title: `游戏结束,结果如下：`,
+      content: data.tip,
+      showCancel: false,
+      success: function (res) {
+        if (res.confirm) {
+          console.log('用户点击确定');
+          uni.navigateTo({
+            url: '/pages/index/index'
+          })
+        }
+      }
+    });
   })
 })
 </script>

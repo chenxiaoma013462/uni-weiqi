@@ -59,10 +59,10 @@ onMounted(async () => {
       case 'JOIN_ROOM':
         state.userList.push(res)
         console.log('JOIN_ROOM 加入房间')
-        // uni.toast({
-        //   title: res.userName + '加入房间',
-        //   icon: 'success'
-        // })
+        uni.showToast({
+          title: res.userName + '加入房间',
+          icon: 'success'
+        })
         console.log(res.userName + '加入房间')
         break
       case 'MAKE_MOVE':
@@ -71,10 +71,10 @@ onMounted(async () => {
         break
       case 'USER_LEAVE':
         console.log('USER_LEAVE 退出房间')
-        // uni.toast({
-        //   title: res.userName + '退出房间',
-        //   icon: 'success'
-        // })
+        uni.showToast({
+          title: res.userName + '退出房间',
+          icon: 'success'
+        })
         console.log(res.userName + '退出房间')
         state.userList = state.userList.filter(item => item.userName !== res.name)
         uni.$emit('stopPaly')
@@ -82,10 +82,10 @@ onMounted(async () => {
         break
       case 'USER_READY':
         console.log('USER_READY 准备游戏')
-        // uni.toast({
-        //   title: res.userName + '已准备',
-        //   icon: 'success'
-        // })
+        uni.showToast({
+          title: res.userName + '已准备',
+          icon: 'success'
+        })
         console.log(res.userName + '已准备')
         uni.$emit('SEND_USER_READY', res.userName)
         break
@@ -97,6 +97,10 @@ onMounted(async () => {
         break
       case 'START_GAME':
         console.log('START_GAME 开始游戏',)
+        uni.showToast({
+          title: '游戏开始',
+          icon: 'success'
+        })
         uni.$emit("SEND_START_GAME")
     }
   }

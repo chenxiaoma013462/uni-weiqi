@@ -48,3 +48,19 @@ export function joinOrBuildRoom(config) {
         // data: config
     });
 	}
+
+	// 获取排行榜
+export function getRankList(config) {
+	return myRequest({
+		url: '/weiqi/result/ranking',
+		method: 'post',
+		data: config
+	})}
+
+	// 输赢存储
+export function saveResult(config) {
+	return myRequest({
+		url: '/weiqi/result/save',
+		method: 'post',
+		data: config
+	})}
