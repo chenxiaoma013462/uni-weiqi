@@ -20,7 +20,7 @@
 import { ref, onMounted } from 'vue';
 import { register, getOpenId } from '@/http/api/all';
 import { onShow } from '@dcloudio/uni-app';
-const backgroundImg = ref('../../static/bg_12.png');
+const backgroundImg = ref('https://img.99ppt.com/pic/f25b1621-da59-4935-829b-0d20f0424d60.png');
 const logoImg = ref('https://img.yzcdn.cn/vant/logo.png');
 
 

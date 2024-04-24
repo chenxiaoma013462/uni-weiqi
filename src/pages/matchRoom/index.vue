@@ -22,7 +22,6 @@ const state = reactive({
 })
 const userViewRef = ref(null)
 onMounted(async () => {
-  console.log('onMounted123', state)
   let config = {
     roomId: '',
     userId: ''
@@ -44,6 +43,9 @@ onMounted(async () => {
       title: data.msg,
       icon: 'none'
     });
+    setTimeout(() => {
+      uni.navigateBack()
+    }, 2000)
     console.log('退出，房间号****')
     return
   }
