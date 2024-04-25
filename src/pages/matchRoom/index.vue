@@ -51,6 +51,7 @@ onMounted(async () => {
   }
   state.roomId = data.data.roomId
   state.userList = data.data.userList
+  // const socketUrl = `ws://192.168.2.120:3000`
   const socketUrl = `ws://193.112.190.204:5000/api/weiqi/ws/${state.userId}`
   state.socket ? this.$socket.Close() : null
   state.socket = new webSocketUtils(socketUrl, 5000)
@@ -106,6 +107,15 @@ onMounted(async () => {
         uni.$emit("SEND_START_GAME")
     }
   }
+  let count = 0
+  // 定时发送 
+  setInterval(() => {
+    count++
+    state.socket.send({
+      type: 'HEART_BEAT',
+      text: '心跳检测++ ' + count
+    })
+  }, 3000)
 })
 
 onLoad(async (opt) => {
